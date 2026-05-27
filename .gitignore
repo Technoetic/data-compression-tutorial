@@ -1,0 +1,29 @@
+node_modules/
+dist/
+.vite/
+*.log
+.DS_Store
+Thumbs.db
+
+# 빌드/임시 산출물
+coverage/
+step_archive/coverage/
+step_archive/jscpd-baseline/
+step_archive/knip-baseline.json
+step_archive/semgrep-r1.json
+step_archive/tokei-r1.json
+step_archive/sme.json
+step_archive/a11y-results.json
+step_archive/a11y-detail.json
+step_archive/tokei-baseline.json
+step_archive/button-click-report.json
+
+# 거대한 raw 조사 데이터 — 클론한 참고 레포
+step_archive/references/
+
+# Playwright 캐시
+test-results/
+playwright-report/
+
+# Obsidian
+step_archive/.obsidian/workspace*.json

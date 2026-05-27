@@ -1,0 +1,36 @@
+{
+  "name": "data-compression-tutorial",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "데이터 압축과 부호화 — 인터랙티브 학습 튜토리얼 (RLE/Huffman/LZ77/Base64)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:cov": "c8 --reporter=text --reporter=html vitest run",
+    "lint:js": "biome check src/",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "format": "biome format --write src/",
+    "dup": "jscpd src/ --reporters=html,console --output=step_archive/dup-report --min-lines=10",
+    "dead": "knip --reporter compact",
+    "deps": "madge --circular src/",
+    "lhci": "lhci autorun"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "*",
+    "@biomejs/biome": "*",
+    "@lhci/cli": "*",
+    "@vitest/coverage-v8": "*",
+    "c8": "*",
+    "jscpd": "*",
+    "knip": "*",
+    "madge": "*",
+    "playwright": "*",
+    "source-map-explorer": "*",
+    "stylelint": "*",
+    "stylelint-config-standard": "*",
+    "vitest": "*"
+  }
+}

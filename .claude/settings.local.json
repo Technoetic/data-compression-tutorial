@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(rm -f .claude/hooks/step-auto-continue.state)",
+      "Bash(mv retired/step-auto-continue.ps1 .)",
+      "Bash(mv retired/step-progress-loader.ps1 .)",
+      "Bash(mv retired/step-progress-writer.ps1 .)",
+      "Bash(mv retired/step-dependency-gate.ps1 .)",
+      "Bash(cp .claude/hooks/retired/evaluator-trigger.ps1 .claude/hooks/)",
+      "Bash(cp .claude/hooks/retired/token-budget-guard.ps1 .claude/hooks/)",
+      "Bash(cp .claude/hooks/retired/harness-logger.ps1 .claude/hooks/)",
+      "Bash(cp .claude/hooks/retired/pre-compact.ps1 .claude/hooks/)"
+    ]
+  }
+}

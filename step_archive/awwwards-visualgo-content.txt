@@ -1,0 +1,384 @@
+# SOURCE: https://visualgo.net/en
+# VIEWPORT: desktop 1920x1080
+# COLLECTED_AT: 2026-05-26T14:22:48.214Z
+
+7 VisuAlgo.net / 
+en
+zh
+id
+Login
+VisuAlgo.net/en
+visualising data structures and algorithms through animation
+▿
+
+
+
+Featured story: Visualizing Algorithms with a Click
+
+
+
+
+Featured blog: Digitising as many static Computer Science textbooks examples into equivalent VisuAlgo animation
+
+
+
+
+VisuAlgo project continues to be funded by Optiver (started mid 2023, to continue to mid 2026 and possibly beyond).
+The focus for 2026 expansion project is to explore new Information Visualization techniques, perhaps AI-assisted.
+
+Do You Know?
+Next Random Tip
+
+In VisuAlgo, you can use your own input for any algorithm instead of using only the provided sample inputs. This is one of the key feature of VisuAlgo. Try the graph drawing feature in these 9 graph-related visualizations: Graph DS, DFS/BFS, MST, SSSP, Max Flow, Matching, MVC, Steiner Tree, and TSP. You can also click tag 'graph' in any of these 9 graph-related visualization boxes or type in 'graph' in the search box.
+
+
+
+Click to View
+Array
+Training
+✍
+cs1010
+it5003
+cs2040
+cs3230
+cs3233
+Click to View
+Sorting
+Training
+✍
+array
+algorithm
+bubble
+select
+insert
+selection
+insertion
+merge
+quick
+randomized quick
+counting
+radix
+sort
+cs1010
+it5003
+cs2040
+cs3230
+list
+data structure
+sorting
+Click to View
+Bitmask
+Training
+✍
+bit manipulation
+set
+cs3233
+array
+list
+ds
+data structure
+bitmask
+Click to View
+Linked List
+Training
+✍
+stack
+queue
+doubly
+deque
+it5003
+cs2040
+array
+ds
+data structure
+linked
+Click to View
+Binary Heap
+Training
+✍
+priority queue
+recursive
+it5003
+cs2040
+recursion
+ds
+data structure
+binary
+heap
+Click to View
+Hash Table
+Training
+✍
+open addressing
+linear
+quadratic
+probing
+it5003
+cs2040
+ds
+data structure
+Click to View
+Binary Search Tree
+Training
+✍
+adelson velskii landis
+set
+table
+avl
+it5003
+cs2040
+recursion
+recursive
+ds
+data structure
+set
+bst
+binary
+search
+tree
+priority
+queue
+Click to View
+Graph Structures
+Training
+✍
+tree
+complete
+bipartite
+dag
+it5003
+cs2040
+graph
+ds
+data structure
+Click to View
+Union-Find DS
+Training
+✍
+path compression
+disjoint
+set
+data structure
+union by rank
+cs2040
+cs3233
+array
+tree
+find
+ds
+Click to View
+Fenwick Tree
+Training
+✍
+binary indexed tree
+bit
+dynamic
+fenwick
+range
+sum
+point
+update
+cs3233
+binary
+ds
+data structure
+Click to View
+Segment Tree
+Training
+✍
+dynamic
+range
+sum
+min
+max
+cs3233
+segment
+tree
+ds
+data structure
+Click to View
+Recursion Tree/DAG
+Training
+✍
+dynamic programming
+dp
+generic
+cs1010
+it5003
+cs2040
+cs3233
+cs4234
+recursive
+algorithm
+recursion
+tree
+dag
+Click to View
+Graph Traversal
+Training
+✍
+bfs
+dfs
+it5003
+cs2040
+bipartite
+scc
+cut vertex
+articulation point
+bridge
+cs2020
+graph
+algorithm
+Click to View
+Min Spanning Tree
+Training
+✍
+mst
+prim
+kruskal
+graph
+min
+spanning
+cs2040
+tree
+algorithm
+Click to View
+SS Shortest Paths
+Training
+✍
+sssp
+single-source
+bfs
+dijkstra
+bellman ford
+it5003
+cs2040
+single source
+shortest path
+graph
+algorithm
+Click to View
+Cycle Finding
+Training
+✍
+floyd
+tortoise-hare
+math
+cs3233
+algorithm
+Click to View
+Suffix Tree
+Training
+✍
+string
+matching
+lrs
+lcs
+cs3233
+suffix
+tree
+ds
+data structure
+Click to View
+Suffix Array
+Training
+✍
+lcp
+cs3233
+matching
+lrs
+lcs
+suffix
+array
+string
+ds
+data structure
+Click to View
+Geometry (Polygon)
+Training
+✍
+convex
+cut
+winding
+concave
+cs3233
+computational
+geometry
+algorithm
+Click to View
+Convex Hull
+Training
+✍
+andrew
+monotone chain
+graham
+scan
+jarvis
+march
+cs3233
+computational
+geometry
+algorithm
+Click to View
+Network Flow
+Training
+✍
+max flow
+edmonds karp
+min cut
+dinic
+ford fulkerson
+graph
+cs3233
+cs4234
+algorithm
+Click to View
+Graph Matching
+Training
+✍
+augmenting path
+bipartite
+graph
+cs3233
+cs4234
+matching
+algorithm
+Click to View
+Min Vertex Cover
+Training
+✍
+np-hard
+graph
+bipartite
+tree
+tree
+dp
+bipartite
+matching
+max flow
+cs3233
+cs4234
+Click to View
+Steiner Tree
+Training
+✍
+np-hard
+graph
+mst
+cs4234
+Click to View
+Traveling Salesperson Problem
+Training
+✍
+np-hard
+graph
+dp
+mst
+cs3233
+cs4234
+Click to View
+NP-complete Reductions
+✍
+cs3230
+cs4234
+About Team Terms of use Privacy Policy

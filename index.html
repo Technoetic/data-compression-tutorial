@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="데이터 압축과 부호화 — RLE · Huffman · LZ77 · Base64 인터랙티브 튜토리얼" />
+  <title>데이터 압축과 부호화 — 인터랙티브 튜토리얼</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="app-header" role="banner">
+    <h1 class="logo">데이터 압축과 부호화</h1>
+    <nav class="anchor-nav" aria-label="단원 네비게이션">
+      <a href="#intro">§0 엔트로피</a>
+      <a href="#rle">§1 RLE</a>
+      <a href="#huffman">§2 Huffman</a>
+      <a href="#lz77">§3 LZ77</a>
+      <a href="#base64">§4 Base64</a>
+      <a href="#sum">§5 종합</a>
+    </nav>
+    <div class="progress-rail" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" aria-label="학습 진행률"></div>
+  </header>
+
+  <main role="main">
+
+    <!-- §0 인트로 — 정보 엔트로피 -->
+    <section id="intro" class="chapter chapter--intro" aria-labelledby="intro-title">
+      <header class="chapter__head">
+        <h2 id="intro-title">§0 압축은 왜 가능한가? — 정보 엔트로피</h2>
+        <p class="chapter__lead">"AAAAA..." 같은 반복은 거의 0비트로 줄지만, 완전 무작위는 줄어들지 않는다. 이 한계가 <strong>섀넌 엔트로피 H(X)</strong>다. 압축 알고리즘이 만들 수 있는 최저 비트수의 이론적 하한.</p>
+        <ul class="chip-list" aria-label="관련 사례">
+          <li class="chip">PNG / JPEG / MP3</li>
+          <li class="chip">정보이론(1948)</li>
+        </ul>
+      </header>
+      <div class="chapter__body">
+        <div class="chapter__input">
+          <label for="intro-input">텍스트를 입력해 보세요 — 반복이 많을수록 압축 여유가 커집니다</label>
+          <textarea id="intro-input" data-role="input" rows="3">AAAAAAAABBBCCDDDA</textarea>
+        </div>
+        <div class="chapter__viz" data-role="viz" tabindex="0" aria-label="엔트로피 미터"></div>
+        <div class="chapter__controls" data-role="controls" aria-label="제어">
+          <button type="button" class="btn btn--ghost" data-action="reset">↺ Reset</button>
+          <button type="button" class="btn btn--primary" data-action="step">단계 ▶</button>
+          <button type="button" class="btn btn--ghost" data-action="auto">자동 ▶▶</button>
+          <span class="step-meter" aria-live="off">0 / 0</span>
+        </div>
+        <output class="chapter__inspector" data-role="inspector" aria-live="polite">대기 중</output>
+        <div class="chapter__result" data-role="result"></div>
+      </div>
+    </section>
+
+    <!-- §1 RLE -->
+    <section id="rle" class="chapter chapter--rle" aria-labelledby="rle-title">
+      <header class="chapter__head">
+        <h2 id="rle-title">§1 RLE — Run-Length Encoding (런-길이 부호화)</h2>
+        <p class="chapter__lead">연속된 같은 값을 "값 × 횟수"로 줄이는 가장 단순한 무손실 압축. 종이의 90%가 흰색인 팩스에서는 효율적이지만, 모든 글자가 다른 텍스트에는 오히려 2배가 됩니다.</p>
+        <ul class="chip-list" aria-label="대중 앱 사례">
+          <li class="chip">팩스 (ITU-T T.45)</li>
+          <li class="chip">BMP / TGA / PCX</li>
+          <li class="chip">JPEG 양자화 후처리</li>
+          <li class="chip">Windows 3.x 부팅 화면</li>
+        </ul>
+      </header>
+      <div class="chapter__body">
+        <div class="chapter__input">
+          <label for="rle-input">입력 텍스트</label>
+          <textarea id="rle-input" data-role="input" rows="3">AAAABBBCCDAAA</textarea>
+        </div>
+        <div class="chapter__viz" data-role="viz" tabindex="0" aria-label="RLE 격자 시각화"></div>
+        <div class="chapter__controls" data-role="controls">
+          <button type="button" class="btn btn--ghost" data-action="reset">↺ Reset</button>
+          <button type="button" class="btn btn--primary" data-action="step">단계 ▶</button>
+          <button type="button" class="btn btn--ghost" data-action="auto">자동 ▶▶</button>
+          <span class="step-meter">0 / 0</span>
+        </div>
+        <output class="chapter__inspector" data-role="inspector" aria-live="polite">대기 중</output>
+        <div class="chapter__result" data-role="result"></div>
+      </div>
+    </section>
+
+    <!-- §2 Huffman -->
+    <section id="huffman" class="chapter chapter--huffman" aria-labelledby="huff-title">
+      <header class="chapter__head">
+        <h2 id="huff-title">§2 허프만 부호화 — Huffman Coding</h2>
+        <p class="chapter__lead">자주 나오는 문자에 <strong>짧은 비트열</strong>을, 드문 문자에 긴 비트열을 주는 가변 길이 부호화. 1952년 MIT 박사과정생 데이비드 허프만이 제안. <strong>접두사 무관(prefix-free)</strong> 트리로 디코딩이 유일합니다.</p>
+        <ul class="chip-list" aria-label="대중 앱 사례">
+          <li class="chip">DEFLATE 2단계 (ZIP / PNG / gzip)</li>
+          <li class="chip">JPEG 엔트로피 코딩</li>
+          <li class="chip">MP3 인코딩</li>
+          <li class="chip">.docx / .xlsx 내부 압축</li>
+        </ul>
+      </header>
+      <div class="chapter__body">
+        <div class="chapter__input">
+          <label for="huff-input">텍스트 — 각 글자의 빈도가 트리 모양과 부호 길이를 결정합니다</label>
+          <textarea id="huff-input" data-role="input" rows="3">this is an example of a huffman tree</textarea>
+        </div>
+        <div class="chapter__viz" data-role="viz" tabindex="0" aria-label="허프만 트리 시각화"></div>
+        <div class="chapter__controls" data-role="controls">
+          <button type="button" class="btn btn--ghost" data-action="reset">↺ Reset</button>
+          <button type="button" class="btn btn--primary" data-action="step">단계 ▶</button>
+          <button type="button" class="btn btn--ghost" data-action="auto">자동 ▶▶</button>
+          <span class="step-meter">0 / 0</span>
+        </div>
+        <output class="chapter__inspector" data-role="inspector" aria-live="polite">대기 중</output>
+        <div class="chapter__result" data-role="result"></div>
+      </div>
+    </section>
+
+    <!-- §3 LZ77 -->
+    <section id="lz77" class="chapter chapter--lz77" aria-labelledby="lz77-title">
+      <header class="chapter__head">
+        <h2 id="lz77-title">§3 LZ77 — 사전식 슬라이딩 윈도우 압축</h2>
+        <p class="chapter__lead">"방금 본 패턴이 또 나오면, 그 시작 거리·길이를 적어 두기." Lempel과 Ziv가 1977년에 제안. PNG·ZIP·gzip의 핵심 1단계입니다. <strong>(거리 D, 길이 L, 다음 글자 c)</strong> 토큰을 출력합니다.</p>
+        <ul class="chip-list" aria-label="대중 앱 사례">
+          <li class="chip">DEFLATE 1단계 (ZIP / PNG / gzip / zlib)</li>
+          <li class="chip">GIF (LZW 변형)</li>
+          <li class="chip">7-Zip (LZMA)</li>
+          <li class="chip">Brotli (HTTP/Web)</li>
+        </ul>
+      </header>
+      <div class="chapter__body">
+        <div class="chapter__input">
+          <label for="lz77-input">텍스트 — 윈도우 크기는 학습용 32바이트입니다</label>
+          <textarea id="lz77-input" data-role="input" rows="3">abracadabraabracadabra</textarea>
+        </div>
+        <div class="chapter__viz" data-role="viz" tabindex="0" aria-label="LZ77 슬라이딩 윈도우 시각화"></div>
+        <div class="chapter__controls" data-role="controls">
+          <button type="button" class="btn btn--ghost" data-action="reset">↺ Reset</button>
+          <button type="button" class="btn btn--primary" data-action="step">단계 ▶</button>
+          <button type="button" class="btn btn--ghost" data-action="auto">자동 ▶▶</button>
+          <span class="step-meter">0 / 0</span>
+        </div>
+        <output class="chapter__inspector" data-role="inspector" aria-live="polite">대기 중</output>
+        <div class="chapter__result" data-role="result"></div>
+      </div>
+    </section>
+
+    <!-- §4 Base64 -->
+    <section id="base64" class="chapter chapter--base64" aria-labelledby="b64-title">
+      <header class="chapter__head">
+        <h2 id="b64-title">§4 Base64 — 부호화(인코딩)지, 압축이 아닙니다</h2>
+        <p class="chapter__lead">바이너리 데이터를 ASCII 64글자(A-Z, a-z, 0-9, +, /)로 표현. 텍스트 전용 채널(이메일 SMTP·URL·JSON)에 바이너리를 실어 보낼 때 씁니다. 크기는 오히려 약 <strong>33% 증가</strong>합니다.</p>
+        <ul class="chip-list" aria-label="대중 앱 사례">
+          <li class="chip">이메일 첨부 (SMTP 7-bit)</li>
+          <li class="chip">data: URI (HTML/CSS 이미지)</li>
+          <li class="chip">JWT 토큰 (Base64URL)</li>
+          <li class="chip">QR 코드 / PGP 지문</li>
+        </ul>
+      </header>
+      <div class="chapter__body">
+        <div class="chapter__input">
+          <label for="b64-input">텍스트 — 길이 3의 배수가 아니면 `=` 패딩이 붙습니다</label>
+          <textarea id="b64-input" data-role="input" rows="3">Many hands make light work.</textarea>
+        </div>
+        <div class="chapter__viz" data-role="viz" tabindex="0" aria-label="Base64 4단계 시각화"></div>
+        <div class="chapter__controls" data-role="controls">
+          <button type="button" class="btn btn--ghost" data-action="reset">↺ Reset</button>
+          <button type="button" class="btn btn--primary" data-action="step">단계 ▶</button>
+          <button type="button" class="btn btn--ghost" data-action="auto">자동 ▶▶</button>
+          <span class="step-meter">0 / 0</span>
+        </div>
+        <output class="chapter__inspector" data-role="inspector" aria-live="polite">대기 중</output>
+        <div class="chapter__result" data-role="result"></div>
+      </div>
+    </section>
+
+    <!-- §5 종합 -->
+    <section id="sum" class="chapter chapter--sum" aria-labelledby="sum-title">
+      <header class="chapter__head">
+        <h2 id="sum-title">§5 종합 — PNG · ZIP · HTTP gzip은 어떻게 만들어질까</h2>
+        <p class="chapter__lead">DEFLATE는 <strong>LZ77 + Huffman</strong>을 합친 알고리즘입니다. ZIP·PNG·gzip·.docx·.xlsx 모두 내부에서 이 두 단계를 차례로 사용합니다. Base64는 이 과정과 무관하게, 압축된 바이너리를 텍스트 채널로 보낼 때 별도로 씁니다.</p>
+      </header>
+      <div class="pipeline" aria-label="DEFLATE 파이프라인">
+        <div class="pipeline__stage">
+          <h3>1단계 · LZ77</h3>
+          <p>원본 텍스트의 반복을 (거리, 길이, 다음 글자) 토큰으로 치환합니다.</p>
+        </div>
+        <div class="pipeline__arrow">→</div>
+        <div class="pipeline__stage">
+          <h3>2단계 · Huffman</h3>
+          <p>토큰과 리터럴을 빈도에 따라 가변 길이 비트열로 부호화합니다.</p>
+        </div>
+      </div>
+      <p class="muted" style="margin-top: var(--sp-4);">필요하면 결과 바이트를 Base64로 감싸 텍스트 채널에 실어 보냅니다(예: 이메일에 .zip 첨부).</p>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <small>출처: Wikipedia(RLE/Huffman/LZ77/Base64/DEFLATE/Entropy) · 참고 레포 huffman-visualization, lz77-demo · 디자인 참조 linear.app, vercel.com, ciechanow.ski, distill.pub, visualgo.net</small>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

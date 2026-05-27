@@ -1,0 +1,107 @@
+# destructive-guard.ps1 - 파괴적 명령 차단
+# PreToolUse(Bash) 훅: rm -rf, git push --force, DROP TABLE 등 위험 명령 차단
+param()
+
+# B-P2-10 fix (revised): stdin parse 실패는 fail-open.
+# 정상 호출 흐름에서도 stdin이 비거나 형식이 다를 수 있어 fail-closed는 가용성을 깨뜨린다.
+# 진짜 방어선은 패턴 보강(B-P2-13/14)에 있다.
+$ErrorActionPreference = "Continue"
+$logFile = Join-Path $PSScriptRoot "destructive-guard.log"
+function Write-GuardLog($msg) {
+    $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    try { Add-Content -Path $logFile -Value "[$ts] $msg" -Encoding UTF8 } catch {}
+}
+
+# stdin에서 이벤트 JSON 읽기 (UTF-8 명시)
+$inputJson = $null
+try {
+    $stdinStream = [System.IO.StreamReader]::new([Console]::OpenStandardInput(), [System.Text.Encoding]::UTF8)
+    $raw = $stdinStream.ReadToEnd()
+    $stdinStream.Close()
+    if ($raw) { $inputJson = $raw | ConvertFrom-Json }
+} catch {
+    Write-GuardLog "stdin parse FAILED (fail-open): $_"
+    exit 0
+}
+
+if ($null -eq $inputJson) { exit 0 }
+
+$command = $null
+try { $command = $inputJson.tool_input.command } catch {}
+if (-not $command) { exit 0 }
+
+# 파괴적 패턴 목록 (B-P2-13/14 fix: 공백 분리/별칭/우회 케이스 포함)
+$destructivePatterns = @(
+    # rm: -r -f, -fr, -Rf, -rfv, --recursive --force 등 모든 조합
+    'rm\s+(-[a-zA-Z]*[rfRF]+[a-zA-Z]*\s+)+(/|\.|\*|~|--no-preserve-root)',
+    'rm\s+(-[rR]\s+-[fF]|-[fF]\s+-[rR])\s+',
+    'rm\s+--recursive\s+',
+    'rm\s+--force\s+--recursive',
+    # find -delete / -exec rm
+    'find\s+/\s+.*-delete',
+    'find\s+\S+\s+.*-exec\s+rm',
+    'rmdir\s+/s',
+    'del\s+/f\s+/s',
+    # git: --force-with-lease, +ref, FETCH_HEAD reset 등 우회 포함
+    'git\s+push\s+--force(?!\s)',  # --force 단독
+    'git\s+push\s+--force\s',
+    'git\s+push\s+--force-with-lease',
+    'git\s+push\s+-f\s',
+    'git\s+push\s+\S+\s+\+',  # refspec + 강제 푸시
+    'git\s+reset\s+--hard',
+    'git\s+clean\s+-[fdx]',
+    'git\s+checkout\s+\.',
+    'git\s+restore\s+\.',
+    'git\s+branch\s+-D\s',
+    # SQL
+    'DROP\s+TABLE',
+    'DROP\s+DATABASE',
+    'DROP\s+SCHEMA',
+    'TRUNCATE\s+TABLE',
+    # 패키지 배포/위험
+    'npm\s+publish',
+    'npx\s+-y\s',
+    # chmod: 0777, 777, a+rwx 등
+    'chmod\s+0?777',
+    'chmod\s+a\+rwx',
+    # 파일시스템 파괴
+    'mkfs\.',
+    ':\(\)\s*\{.*\|.*&',  # fork bomb
+    'dd\s+.*of=/dev/(sd|nvme|hd)',
+    '>\s*/dev/(sd|nvme|hd)',
+    # PowerShell 위험 — 시스템 경로 + Recurse 동시 만족 시만 차단 (false positive 방지)
+    'Remove-Item\s+.*-Recurse.*[A-Za-z]:\\?(\s|$|"|'')',
+    'Remove-Item\s+.*[A-Za-z]:\\?(\s|"|'').*-Recurse',
+    'Remove-Item\s+.*-Recurse.*[\\/](Users|Windows|Program|System|etc|var|home|root)',
+    'rd\s+/s\s+/q\s+[A-Za-z]:',          # cmd legacy with drive
+    'Format-Volume',
+    # subshell/명령치환 안에서 rm
+    'rm\s+-[a-zA-Z]*[rfRF]+[a-zA-Z]*\s+["'']?\$\(',
+    'rm\s+-[a-zA-Z]*[rfRF]+[a-zA-Z]*\s+["'']?\$(\{|PWD|HOME)',
+    'rm\s+-[a-zA-Z]*[rfRF]+[a-zA-Z]*\s+`',  # backtick command substitution
+    # pipe-to-shell (curl/wget | sh|bash)
+    '(curl|wget|fetch)\s+.*\|\s*(sh|bash|zsh)\b',
+    'echo\s+.*\|\s*(sh|bash|zsh)\b',
+    # MoAI-ADK 벤치마킹: 보안 패턴 보강
+    'gh\s+(auth\s+token|secret\s+set).*\|',           # GitHub 토큰 누출 위험 파이프
+    'aws\s+(s3\s+rb|iam\s+delete-user|ec2\s+terminate-instances)',  # AWS 파괴 명령
+    'docker\s+(rmi\s+-f|volume\s+rm\s+-f|system\s+prune\s+-af)',     # Docker 강제 제거
+    'kubectl\s+delete\s+(ns|namespace|node|pv|pvc|--all)',            # K8s 광범위 삭제
+    'terraform\s+destroy\s+(-auto-approve|-force)',                   # Terraform 자동 파괴
+    '(ngrok|cloudflared)\s+http\s+(0\.0\.0\.0|\*)',                   # 외부 노출 터널
+    'echo\s+["''](AKIA|ghp_|sk-|xoxb-)'                              # 시크릿 패턴 echo
+)
+
+foreach ($pattern in $destructivePatterns) {
+    if ($command -match $pattern) {
+        Write-GuardLog "BLOCKED pattern=$pattern command=$command"
+        # PreToolUse 차단 정식 코드: exit 2 + stderr
+        [Console]::Error.WriteLine("BLOCKED: Destructive command detected")
+        [Console]::Error.WriteLine("Pattern: $pattern")
+        [Console]::Error.WriteLine("Command: $command")
+        [Console]::Error.WriteLine("This command requires explicit user approval.")
+        exit 2
+    }
+}
+
+exit 0

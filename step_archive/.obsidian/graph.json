@@ -1,0 +1,44 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:archived/step001 OR path:archived/step002 OR path:archived/step003 OR path:archived/step004 OR path:archived/step005 OR path:archived/step006 OR path:archived/step007 OR path:archived/step008 OR path:archived/step009 OR path:archived/step010 OR path:archived/step011 OR path:archived/step012 OR path:archived/step013 OR path:archived/step014",
+      "color": {
+        "a": 1,
+        "rgb": 8421504
+      }
+    },
+    {
+      "query": "path:archived/step049 OR path:archived/step069 OR path:archived/step104",
+      "color": {
+        "a": 1,
+        "rgb": 16729156
+      }
+    },
+    {
+      "query": "path:specs/SPEC",
+      "color": {
+        "a": 1,
+        "rgb": 4900460
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": true,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.1846232622585798,
+  "close": true
+}
